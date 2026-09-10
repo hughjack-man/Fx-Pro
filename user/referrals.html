@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Referrals - Coinnex</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fas fa-coins"></i></div>
+        <span class="sidebar-brand">Coinnex</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+          <a href="deposit.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposit</span></a>
+          <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+          <a href="invest.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Invest</span></a>
+          <a href="loans.html" class="nav-item"><i class="fas fa-hand-holding-usd"></i><span>Loans</span></a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Account</div>
+          <a href="transactions.html" class="nav-item"><i class="fas fa-list"></i><span>Transactions</span></a>
+          <a href="referrals.html" class="nav-item active"><i class="fas fa-users"></i><span>Referrals</span></a>
+          <a href="kyc.html" class="nav-item"><i class="fas fa-id-card"></i><span>KYC</span></a>
+          <a href="wallet-settings.html" class="nav-item"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+          <a href="support.html" class="nav-item"><i class="fas fa-headset"></i><span>Support</span></a>
+          <a href="user-settings.html" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+          <h1 class="page-title">Referral Program</h1>
+        </div>
+        <div class="header-right">
+          <!-- <button class="header-btn" onclick="API.auth.logout()"><i class="fas fa-sign-out-alt"></i></button> -->
+          <div class="user-menu">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">User</div>
+              <div class="user-role">Investor</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Total Referrals</span>
+              <div class="stat-icon primary"><i class="fas fa-users"></i></div>
+            </div>
+            <div class="stat-value" id="totalReferrals">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Total Bonus</span>
+              <div class="stat-icon success"><i class="fas fa-gift"></i></div>
+            </div>
+            <div class="stat-value" id="totalBonus">$0.00</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Referral Bonus %</span>
+              <div class="stat-icon warning"><i class="fas fa-percentage"></i></div>
+            </div>
+            <div class="stat-value" id="bonusPercent">5%</div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-share-alt" style="color: var(--primary); margin-right: 0.5rem;"></i>Your Referral Link</h3>
+          </div>
+          <div class="card-body">
+            <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem;">
+              <input type="text" class="form-input" id="referralLink" readonly style="flex: 1; font-family: monospace;">
+              <button class="btn btn-primary" onclick="copyReferralLink()">
+                <i class="fas fa-copy"></i><span>Copy</span>
+              </button>
+            </div>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <div style="flex: 1; min-width: 200px;">
+                <label class="form-label">Your Referral Code</label>
+                <div style="display: flex; gap: 0.5rem;">
+                  <input type="text" class="form-input" id="referralCode" readonly style="text-align: center; font-weight: 600; letter-spacing: 2px;">
+                  <button class="btn btn-secondary" onclick="copyReferralCode()">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="alert alert-info" style="margin-top: 1.5rem;">
+              <i class="fas fa-info-circle"></i>
+              <span>Share your referral link with friends and earn <strong id="infoBonusPercent">5%</strong> bonus on their first deposit!</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">Your Referrals</h3></div>
+          <div class="card-body">
+            <div id="referralsList"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/notification.js"></script>
+  <script src="../js/tawkto.js"></script>
+  <script>
+    if (!API.utils.isAuthenticated()) window.location.href = 'login.html';
+    
+    // Menu toggle for mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (window.innerWidth <= 1024) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1024) {
+        closeSidebar();
+      }
+    });
+
+    async function loadData() {
+      try {
+        const userData = await API.user.getDashboard();
+        document.getElementById('userName').textContent = userData.user.name;
+        document.getElementById('userAvatar').textContent = userData.user.name.charAt(0).toUpperCase();
+        
+        const data = await API.referral.getMyReferrals();
+        
+        document.getElementById('totalReferrals').textContent = data.stats?.totalReferrals || 0;
+        document.getElementById('totalBonus').textContent = API.utils.formatCurrency(data.stats?.totalBonus || 0);
+        document.getElementById('bonusPercent').textContent = (data.referralBonusPercent || 5) + '%';
+        document.getElementById('infoBonusPercent').textContent = (data.referralBonusPercent || 5) + '%';
+        document.getElementById('referralCode').value = data.referralCode;
+        document.getElementById('referralLink').value = data.referralLink;
+        
+        const container = document.getElementById('referralsList');
+        if (!data.referrals || data.referrals.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-users"></i></div><h3>No Referrals Yet</h3><p>Share your link to start earning bonuses</p></div>`;
+          return;
+        }
+        
+        container.innerHTML = `
+          <div class="table-container">
+            <table class="table">
+              <thead><tr><th>Referred User</th><th>Date</th><th>Bonus</th><th>Status</th></tr></thead>
+              <tbody>
+                ${data.referrals.map(ref => `
+                  <tr>
+                    <td>${ref.referredId?.name || 'User'}<br><small style="color: var(--gray);">${ref.referredId?.email || ''}</small></td>
+                    <td>${API.utils.formatDate(ref.createdAt)}</td>
+                    <td>${API.utils.formatCurrency(ref.bonusAmount)}</td>
+                    <td><span class="badge badge-${ref.status === 'paid' ? 'success' : 'warning'}">${ref.status}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>`;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function copyReferralLink() {
+      const input = document.getElementById('referralLink');
+      input.select();
+      document.execCommand('copy');
+      API.utils.showAlert('Referral link copied!', 'success');
+    }
+
+    function copyReferralCode() {
+      const input = document.getElementById('referralCode');
+      input.select();
+      document.execCommand('copy');
+      API.utils.showAlert('Referral code copied!', 'success');
+    }
+
+    loadData();
+
+    // Load unread message count
+    async function loadUnreadMessageCount() {
+      try {
+        const data = await API.message.getUnreadCount();
+        const badge = document.getElementById('messageBadge');
+        if (data.count > 0) {
+          badge.textContent = data.count > 99 ? '99+' : data.count;
+          badge.style.display = 'block';
+        } else {
+          badge.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error loading unread count:', error);
+      }
+    }
+
+    loadUnreadMessageCount();
+    loadUnreadMessageCount();
+
+    // Poll unread messages every 10 seconds
+    setInterval(loadUnreadMessageCount, 10000);
+  </script>
+
+   <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c317cf6b8b821c3ef15678/1jkh1a0mp';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>
