@@ -13,7 +13,7 @@
 
 // const API_BASE_URL = getBaseUrl();
 // API Configuration
-const API_BASE_URL = 'https://coinnex-backend.onrender.com/api';
+const API_BASE_URL = 'https://fx-pro-backend.onrender.com/api';
 
 console.log('API Base URL:', API_BASE_URL); // Debug log
 
