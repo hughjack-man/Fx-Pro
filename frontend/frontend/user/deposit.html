@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Deposit - Coinnex</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+    
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo">
+          <i class="fas fa-coins"></i>
+        </div>
+        <span class="sidebar-brand">Coinnex</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <a href="dashboard.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Dashboard</span>
+          </a>
+          <a href="deposit.html" class="nav-item active">
+            <i class="fas fa-arrow-down"></i>
+            <span>Deposit</span>
+          </a>
+          <a href="withdraw.html" class="nav-item">
+            <i class="fas fa-arrow-up"></i>
+            <span>Withdraw</span>
+          </a>
+          <a href="invest.html" class="nav-item">
+            <i class="fas fa-chart-line"></i>
+            <span>Invest</span>
+          </a>
+          <a href="loans.html" class="nav-item">
+            <i class="fas fa-hand-holding-usd"></i>
+            <span>Loans</span>
+          </a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Account</div>
+          <a href="transactions.html" class="nav-item">
+            <i class="fas fa-list"></i>
+            <span>Transactions</span>
+          </a>
+          <a href="referrals.html" class="nav-item">
+            <i class="fas fa-users"></i>
+            <span>Referrals</span>
+          </a>
+          <a href="kyc.html" class="nav-item">
+            <i class="fas fa-id-card"></i>
+            <span>KYC Verification</span>
+          </a>
+          <a href="wallet-settings.html" class="nav-item">
+            <i class="fas fa-wallet"></i>
+            <span>Wallet Settings</span>
+          </a>
+          <a href="support.html" class="nav-item">
+            <i class="fas fa-headset"></i>
+            <span>Support</span>
+          </a>
+          <a href="user-settings.html" class="nav-item">
+            <i class="fas fa-cog"></i>
+            <span>Settings</span>
+          </a>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <h1 class="page-title">Deposit Funds</h1>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" onclick="window.location.href='support.html'" title="Messages">
+            <i class="fas fa-envelope"></i>
+            <span class="badge" id="messageBadge" style="display: none;">0</span>
+          </button>
+          <!-- <button class="header-btn" onclick="API.auth.logout()" title="Logout">
+            <i class="fas fa-sign-out-alt"></i>
+          </button> -->
+          <div class="user-menu">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">User</div>
+              <div class="user-role">Investor</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+          <!-- Deposit Form -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fab fa-bitcoin" style="color: #f7931a; margin-right: 0.5rem;"></i>
+                BTC Deposit
+              </h3>
+            </div>
+            <div class="card-body">
+              <form id="depositForm">
+                <div class="form-group">
+                  <label class="form-label">Deposit Amount (USD)</label>
+                  <div style="position: relative;">
+                    <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b;">$</span>
+                    <input type="number" class="form-input" id="amount" placeholder="Enter amount" min="50" required style="padding-left: 2rem;">
+                  </div>
+                  <p class="form-hint">Minimum deposit: $50</p>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">BTC Wallet Address</label>
+                  <div style="display: flex; gap: 0.5rem;">
+                    <input type="text" class="form-input" id="btcWallet" readonly style="flex: 1; font-family: monospace;">
+                    <button type="button" class="btn btn-secondary" onclick="copyWallet()">
+                      <i class="fas fa-copy"></i>
+                    </button>
+                  </div>
+                  <p class="form-hint">Send BTC to this address</p>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">Transaction Hash (TXID)</label>
+                  <input type="text" class="form-input" id="txHash" placeholder="Enter transaction hash after sending BTC">
+                  <p class="form-hint">Optional but recommended for faster processing</p>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">Payment Proof (Screenshot)</label>
+                  <input type="file" class="form-input" id="btcProof" accept="image/*">
+                  <p class="form-hint">Upload screenshot of your transaction</p>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn">
+                  <i class="fas fa-paper-plane"></i>
+                  <span>Submit Deposit Request</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- Instructions -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">
+                <i class="fas fa-info-circle" style="color: var(--info); margin-right: 0.5rem;"></i>
+                How to Deposit
+              </h3>
+            </div>
+            <div class="card-body">
+              <div style="display: flex; flex-direction: column; gap: 1rem;">
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                  <div style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">1</div>
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">Enter Amount</div>
+                    <div style="font-size: 0.875rem; color: var(--gray);">Specify how much you want to deposit (minimum $50)</div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                  <div style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">2</div>
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">Send BTC</div>
+                    <div style="font-size: 0.875rem; color: var(--gray);">Send the equivalent BTC amount to the wallet address shown</div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                  <div style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">3</div>
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">Submit Request</div>
+                    <div style="font-size: 0.875rem; color: var(--gray);">Enter transaction hash and upload proof, then submit</div>
+                  </div>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                  <div style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">4</div>
+                  <div>
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">Wait for Confirmation</div>
+                    <div style="font-size: 0.875rem; color: var(--gray);">Our team will verify and approve your deposit within 24 hours</div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="alert alert-warning" style="margin-top: 1.5rem;">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Make sure to send BTC only. Sending other cryptocurrencies may result in permanent loss.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Deposit History -->
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title">Deposit History</h3>
+          </div>
+          <div class="card-body">
+            <div id="depositsList">
+              <div class="loading">
+                <div class="spinner"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/notification.js"></script>
+  <script src="../js/tawkto.js"></script>
+  <script>
+    if (!API.utils.isAuthenticated()) {
+      window.location.href = 'login.html';
+    }
+
+    // Menu toggle for mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (window.innerWidth <= 1024) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1024) {
+        closeSidebar();
+      }
+    });
+
+    // Load user info and BTC wallet
+    async function loadData() {
+      try {
+        const userData = await API.user.getDashboard();
+        document.getElementById('userName').textContent = userData.user.name;
+        document.getElementById('userAvatar').textContent = userData.user.name.charAt(0).toUpperCase();
+        
+        const settings = await API.settings.getBTCWallet();
+        document.getElementById('btcWallet').value = settings.btcWalletAddress || 'Not configured yet';
+        
+        loadDeposits();
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    }
+
+    // Copy wallet address
+    function copyWallet() {
+      const walletInput = document.getElementById('btcWallet');
+      walletInput.select();
+      document.execCommand('copy');
+      API.utils.showAlert('Wallet address copied!', 'success');
+    }
+
+    // Handle deposit form
+    document.getElementById('depositForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const amount = document.getElementById('amount').value;
+      const txHash = document.getElementById('txHash').value;
+      const btcProof = document.getElementById('btcProof').files[0];
+      const submitBtn = document.getElementById('submitBtn');
+      
+      if (amount < 50) {
+        API.utils.showAlert('Minimum deposit amount is $50', 'warning');
+        return;
+      }
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<div class="spinner" style="width: 20px; height: 20px; border-width: 2px;"></div>';
+      
+      try {
+        const formData = new FormData();
+        formData.append('amount', amount);
+        if (txHash) formData.append('txHash', txHash);
+        if (btcProof) formData.append('btcProof', btcProof);
+        
+        await API.deposit.create(formData);
+        
+        API.utils.showAlert('Deposit request submitted successfully!', 'success');
+        document.getElementById('depositForm').reset();
+        loadDeposits();
+      } catch (error) {
+        API.utils.showAlert(error.message, 'danger');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>Submit Deposit Request</span>';
+      }
+    });
+
+    // Load deposits
+    async function loadDeposits() {
+      try {
+        const data = await API.deposit.getMyDeposits();
+        const container = document.getElementById('depositsList');
+        
+        if (!data.deposits || data.deposits.length === 0) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">
+                <i class="fas fa-arrow-down"></i>
+              </div>
+              <h3>No Deposits Yet</h3>
+              <p>Your deposit history will appear here</p>
+            </div>
+          `;
+          return;
+        }
+        
+        container.innerHTML = `
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.deposits.map(d => `
+                  <tr>
+                    <td>${API.utils.formatCurrency(d.amount)}</td>
+                    <td><span class="badge badge-${d.status === 'approved' ? 'success' : d.status === 'pending' ? 'warning' : 'danger'}">${d.status}</span></td>
+                    <td>${API.utils.formatDate(d.createdAt)}</td>
+                    <td>${d.notes || '-'}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>
+        `;
+      } catch (error) {
+        console.error('Error loading deposits:', error);
+      }
+    }
+
+    // Load unread message count
+    async function loadUnreadMessageCount() {
+      try {
+        const data = await API.message.getUnreadCount();
+        const badge = document.getElementById('messageBadge');
+        if (data.count > 0) {
+          badge.textContent = data.count > 99 ? '99+' : data.count;
+          badge.style.display = 'block';
+        } else {
+          badge.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error loading unread count:', error);
+      }
+    }
+
+    loadData();
+    loadUnreadMessageCount();
+    
+    // Poll unread messages every 10 seconds
+    setInterval(loadUnreadMessageCount, 10000);
+  </script>
+
+  <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c1c6ec91de1e1c374ca128/1jkef23cl';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>

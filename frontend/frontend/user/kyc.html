@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KYC Verification - Coinnex</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <!-- <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div> -->
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fas fa-coins"></i></div>
+        <span class="sidebar-brand">Coinnex</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+          <a href="deposit.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposit</span></a>
+          <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+          <a href="invest.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Invest</span></a>
+          <a href="loans.html" class="nav-item"><i class="fas fa-hand-holding-usd"></i><span>Loans</span></a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Account</div>
+          <a href="transactions.html" class="nav-item"><i class="fas fa-list"></i><span>Transactions</span></a>
+          <a href="referrals.html" class="nav-item"><i class="fas fa-users"></i><span>Referrals</span></a>
+          <a href="kyc.html" class="nav-item active"><i class="fas fa-id-card"></i><span>KYC</span></a>
+          <a href="wallet-settings.html" class="nav-item"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+          <a href="support.html" class="nav-item"><i class="fas fa-headset"></i><span>Support</span></a>
+          <a href="user-settings.html" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+          <h1 class="page-title">KYC Verification</h1>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" onclick="API.auth.logout()"><i class="fas fa-sign-out-alt"></i></button>
+          <div class="user-menu">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">User</div>
+              <div class="user-role">Investor</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+        
+        <div id="kycStatusCard" class="card" style="margin-bottom: 1.5rem;">
+          <div class="card-body">
+            <div id="kycStatusContent"></div>
+          </div>
+        </div>
+
+        <div class="card" id="kycFormCard">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-id-card" style="color: var(--primary); margin-right: 0.5rem;"></i>Submit KYC Documents</h3>
+          </div>
+          <div class="card-body">
+            <form id="kycForm">
+              <div class="form-group">
+                <label class="form-label">ID Type</label>
+                <select class="form-select" id="idType" required>
+                  <option value="">Select ID type</option>
+                  <option value="passport">Passport</option>
+                  <option value="drivers_license">Driver's License</option>
+                  <option value="national_id">National ID</option>
+                </select>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">ID Number</label>
+                <input type="text" class="form-input" id="idNumber" placeholder="Enter your ID number" required>
+              </div>
+              
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem;">
+                <div class="form-group">
+                  <label class="form-label">Front Side of ID</label>
+                  <input type="file" class="form-input" id="frontImage" accept="image/*" required>
+                  <p class="form-hint">Clear photo of the front side</p>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">Back Side of ID</label>
+                  <input type="file" class="form-input" id="backImage" accept="image/*" required>
+                  <p class="form-hint">Clear photo of the back side</p>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <label class="form-label">Selfie with ID (Optional)</label>
+                <input type="file" class="form-input" id="selfieImage" accept="image/*">
+                <p class="form-hint">Hold your ID next to your face</p>
+              </div>
+              
+              <button type="submit" class="btn btn-primary btn-lg" id="submitBtn">
+                <i class="fas fa-paper-plane"></i><span>Submit KYC</span>
+              </button>
+            </form>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-shield-alt" style="color: var(--secondary); margin-right: 0.5rem;"></i>Why KYC is Required</h3>
+          </div>
+          <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
+              <div style="text-align: center;">
+                <div style="width: 60px; height: 60px; background: rgba(16, 185, 129, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                  <i class="fas fa-shield-alt" style="font-size: 1.5rem; color: var(--secondary);"></i>
+                </div>
+                <h4 style="margin-bottom: 0.5rem;">Security</h4>
+                <p style="color: var(--gray); font-size: 0.875rem;">Protect your account from unauthorized access</p>
+              </div>
+              <div style="text-align: center;">
+                <div style="width: 60px; height: 60px; background: rgba(99, 102, 241, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                  <i class="fas fa-check-circle" style="font-size: 1.5rem; color: var(--primary);"></i>
+                </div>
+                <h4 style="margin-bottom: 0.5rem;">Compliance</h4>
+                <p style="color: var(--gray); font-size: 0.875rem;">Meet regulatory requirements</p>
+              </div>
+              <div style="text-align: center;">
+                <div style="width: 60px; height: 60px; background: rgba(245, 158, 11, 0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                  <i class="fas fa-unlock" style="font-size: 1.5rem; color: var(--warning);"></i>
+                </div>
+                <h4 style="margin-bottom: 0.5rem;">Higher Limits</h4>
+                <p style="color: var(--gray); font-size: 0.875rem;">Access higher transaction limits</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/notification.js"></script>
+  <script src="../js/tawkto.js"></script>
+  <script>
+    if (!API.utils.isAuthenticated()) window.location.href = 'login.html';
+    
+    // Menu toggle for mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (window.innerWidth <= 1024) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1024) {
+        closeSidebar();
+      }
+    });
+
+    async function loadData() {
+      try {
+        const userData = await API.user.getDashboard();
+        document.getElementById('userName').textContent = userData.user.name;
+        document.getElementById('userAvatar').textContent = userData.user.name.charAt(0).toUpperCase();
+        
+        const kycData = await API.kyc.getMyKYC();
+        updateKYCStatus(kycData.kyc, userData.user.kycStatus);
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function updateKYCStatus(kyc, status) {
+      const statusCard = document.getElementById('kycStatusContent');
+      const formCard = document.getElementById('kycFormCard');
+      
+      if (status === 'verified' || (kyc && kyc.status === 'approved')) {
+        statusCard.innerHTML = `
+          <div class="alert alert-success" style="margin: 0;">
+            <i class="fas fa-check-circle" style="font-size: 2rem;"></i>
+            <div>
+              <div style="font-weight: 600; font-size: 1.1rem;">KYC Verified</div>
+              <div>Your identity has been verified. You have full access to all features.</div>
+            </div>
+          </div>
+        `;
+        formCard.style.display = 'none';
+      } else if (status === 'pending' || (kyc && kyc.status === 'pending')) {
+        statusCard.innerHTML = `
+          <div class="alert alert-warning" style="margin: 0;">
+            <i class="fas fa-clock" style="font-size: 2rem;"></i>
+            <div>
+              <div style="font-weight: 600; font-size: 1.1rem;">KYC Under Review</div>
+              <div>Your documents are being reviewed. This usually takes 24-48 hours.</div>
+            </div>
+          </div>
+        `;
+        formCard.style.display = 'none';
+      } else if (status === 'rejected' || (kyc && kyc.status === 'rejected')) {
+        statusCard.innerHTML = `
+          <div class="alert alert-danger" style="margin: 0;">
+            <i class="fas fa-times-circle" style="font-size: 2rem;"></i>
+            <div>
+              <div style="font-weight: 600; font-size: 1.1rem;">KYC Rejected</div>
+              <div>${kyc?.rejectionReason || 'Your documents were rejected. Please resubmit.'}</div>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    document.getElementById('kycForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const idType = document.getElementById('idType').value;
+      const idNumber = document.getElementById('idNumber').value;
+      const frontImage = document.getElementById('frontImage').files[0];
+      const backImage = document.getElementById('backImage').files[0];
+      const selfieImage = document.getElementById('selfieImage').files[0];
+      const submitBtn = document.getElementById('submitBtn');
+      
+      if (!frontImage || !backImage) {
+        API.utils.showAlert('Please upload both front and back images', 'warning');
+        return;
+      }
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<div class="spinner" style="width: 16px; height: 16px; border-width: 2px;"></div> Submitting...';
+      
+      try {
+        const formData = new FormData();
+        formData.append('idType', idType);
+        formData.append('idNumber', idNumber);
+        formData.append('frontImage', frontImage);
+        formData.append('backImage', backImage);
+        if (selfieImage) formData.append('selfieImage', selfieImage);
+        
+        await API.kyc.submit(formData);
+        API.utils.showAlert('KYC submitted successfully!', 'success');
+        loadData();
+      } catch (error) {
+        API.utils.showAlert(error.message, 'danger');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>Submit KYC</span>';
+      }
+    });
+
+    loadData();
+
+    // Load unread message count
+    async function loadUnreadMessageCount() {
+      try {
+        const data = await API.message.getUnreadCount();
+        const badge = document.getElementById('messageBadge');
+        if (data.count > 0) {
+          badge.textContent = data.count > 99 ? '99+' : data.count;
+          badge.style.display = 'block';
+        } else {
+          badge.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error loading unread count:', error);
+      }
+    }
+
+    loadUnreadMessageCount();
+    loadUnreadMessageCount();
+
+    // Poll unread messages every 10 seconds
+    setInterval(loadUnreadMessageCount, 10000);
+  </script>
+  
+  <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c1c6ec91de1e1c374ca128/1jkef23cl';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>

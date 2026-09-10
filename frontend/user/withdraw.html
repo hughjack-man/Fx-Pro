@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Withdraw - Coinnex</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fas fa-coins"></i></div>
+        <span class="sidebar-brand">Coinnex</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+          <a href="deposit.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposit</span></a>
+          <a href="withdraw.html" class="nav-item active"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+          <a href="invest.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Invest</span></a>
+          <a href="loans.html" class="nav-item"><i class="fas fa-hand-holding-usd"></i><span>Loans</span></a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Account</div>
+          <a href="transactions.html" class="nav-item"><i class="fas fa-list"></i><span>Transactions</span></a>
+          <a href="referrals.html" class="nav-item"><i class="fas fa-users"></i><span>Referrals</span></a>
+          <a href="kyc.html" class="nav-item"><i class="fas fa-id-card"></i><span>KYC</span></a>
+          <a href="wallet-settings.html" class="nav-item"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+          <a href="support.html" class="nav-item"><i class="fas fa-headset"></i><span>Support</span></a>
+          <a href="user-settings.html" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+          <h1 class="page-title">Withdraw Funds</h1>
+        </div>
+        <div class="header-right">
+          <!-- <button class="header-btn" onclick="API.auth.logout()"><i class="fas fa-sign-out-alt"></i></button> -->
+          <div class="user-menu">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">User</div>
+              <div class="user-role">Investor</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+        
+        <div class="stats-grid" style="margin-bottom: 1.5rem;">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Available Balance</span>
+              <div class="stat-icon primary"><i class="fas fa-wallet"></i></div>
+            </div>
+            <div class="stat-value" id="availableBalance">$0.00</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Minimum Withdrawal</span>
+              <div class="stat-icon warning"><i class="fas fa-info-circle"></i></div>
+            </div>
+            <div class="stat-value" id="minWithdrawal">$100</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-arrow-up" style="color: var(--danger); margin-right: 0.5rem;"></i>Withdrawal Request</h3>
+            </div>
+            <div class="card-body">
+              <form id="withdrawForm">
+                <div class="form-group">
+                  <label class="form-label">Withdrawal Method</label>
+                  <select class="form-select" id="withdrawType" required>
+                    <option value="">Select method</option>
+                    <option value="btc">Bitcoin (BTC)</option>
+                    <option value="bank">Bank Transfer</option>
+                  </select>
+                </div>
+                
+                <div class="form-group">
+                  <label class="form-label">Amount (USD)</label>
+                  <div style="position: relative;">
+                    <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b;">$</span>
+                    <input type="number" class="form-input" id="amount" placeholder="Enter amount" min="100" required style="padding-left: 2rem;">
+                  </div>
+                </div>
+                
+                <div id="btcFields" style="display: none;">
+                  <div class="form-group">
+                    <label class="form-label">BTC Wallet Address</label>
+                    <input type="text" class="form-input" id="walletAddress" placeholder="Enter your BTC wallet address">
+                  </div>
+                </div>
+                
+                <div id="bankFields" style="display: none;">
+                  <div class="form-group">
+                    <label class="form-label">Account Name</label>
+                    <input type="text" class="form-input" id="accountName" placeholder="Enter account holder name">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Account Number</label>
+                    <input type="text" class="form-input" id="accountNumber" placeholder="Enter account number">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Bank Name</label>
+                    <input type="text" class="form-input" id="bankName" placeholder="Enter bank name">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Routing Number</label>
+                    <input type="text" class="form-input" id="swiftCode" placeholder="Enter routing number">
+                  </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block btn-lg" id="submitBtn">
+                  <i class="fas fa-paper-plane"></i><span>Submit Withdrawal</span>
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title"><i class="fas fa-info-circle" style="color: var(--info); margin-right: 0.5rem;"></i>Withdrawal Info</h3>
+            </div>
+            <div class="card-body">
+              <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i>
+                <span>Withdrawals are processed within 24-48 hours after approval.</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 1rem; margin-top: 1rem;">
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                  <div style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">1</div>
+                  <div><div style="font-weight: 600;">Submit Request</div><div style="font-size: 0.875rem; color: var(--gray);">Enter withdrawal details and amount</div></div>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                  <div style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">2</div>
+                  <div><div style="font-weight: 600;">Admin Review</div><div style="font-size: 0.875rem; color: var(--gray);">Our team reviews your request</div></div>
+                </div>
+                <div style="display: flex; gap: 1rem; align-items: flex-start;">
+                  <div style="width: 32px; height: 32px; background: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">3</div>
+                  <div><div style="font-weight: 600;">Processing</div><div style="font-size: 0.875rem; color: var(--gray);">Funds are sent to your wallet/bank</div></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">Withdrawal History</h3></div>
+          <div class="card-body">
+            <div id="withdrawalsList"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/notification.js"></script>
+  <script src="../js/tawkto.js"></script>
+  <script>
+    if (!API.utils.isAuthenticated()) window.location.href = 'login.html';
+    
+    // Menu toggle for mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (window.innerWidth <= 1024) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1024) {
+        closeSidebar();
+      }
+    });
+
+    let userBalance = 0;
+
+    async function loadData() {
+      try {
+        const userData = await API.user.getDashboard();
+        document.getElementById('userName').textContent = userData.user.name;
+        document.getElementById('userAvatar').textContent = userData.user.name.charAt(0).toUpperCase();
+        document.getElementById('availableBalance').textContent = API.utils.formatCurrency(userData.stats.totalBalance);
+        userBalance = userData.stats.totalBalance;
+        
+        const settings = await API.settings.get();
+        if (settings.settings.minWithdrawal) {
+          document.getElementById('minWithdrawal').textContent = API.utils.formatCurrency(settings.settings.minWithdrawal);
+          document.getElementById('amount').min = settings.settings.minWithdrawal;
+        }
+        
+        loadWithdrawals();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    document.getElementById('withdrawType').addEventListener('change', function() {
+      const btcFields = document.getElementById('btcFields');
+      const bankFields = document.getElementById('bankFields');
+      
+      if (this.value === 'btc') {
+        btcFields.style.display = 'block';
+        bankFields.style.display = 'none';
+        document.getElementById('walletAddress').required = true;
+      } else if (this.value === 'bank') {
+        btcFields.style.display = 'none';
+        bankFields.style.display = 'block';
+        document.getElementById('walletAddress').required = false;
+      } else {
+        btcFields.style.display = 'none';
+        bankFields.style.display = 'none';
+      }
+    });
+
+    document.getElementById('withdrawForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const amount = parseFloat(document.getElementById('amount').value);
+      const type = document.getElementById('withdrawType').value;
+      const submitBtn = document.getElementById('submitBtn');
+      
+      if (amount > userBalance) {
+        API.utils.showAlert('Insufficient balance', 'danger');
+        return;
+      }
+      
+      const data = { amount, type };
+      
+      if (type === 'btc') {
+        data.walletAddress = document.getElementById('walletAddress').value;
+        if (!data.walletAddress) {
+          API.utils.showAlert('Please enter BTC wallet address', 'warning');
+          return;
+        }
+      } else if (type === 'bank') {
+        data.bankDetails = {
+          accountName: document.getElementById('accountName').value,
+          accountNumber: document.getElementById('accountNumber').value,
+          bankName: document.getElementById('bankName').value,
+          swiftCode: document.getElementById('swiftCode').value
+        };
+        if (!data.bankDetails.accountNumber) {
+          API.utils.showAlert('Please enter account number', 'warning');
+          return;
+        }
+      }
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<div class="spinner" style="width: 20px; height: 20px; border-width: 2px;"></div>';
+      
+      try {
+        await API.withdrawal.create(data);
+        API.utils.showAlert('Withdrawal request submitted!', 'success');
+        document.getElementById('withdrawForm').reset();
+        document.getElementById('btcFields').style.display = 'none';
+        document.getElementById('bankFields').style.display = 'none';
+        loadData();
+      } catch (error) {
+        API.utils.showAlert(error.message, 'danger');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i><span>Submit Withdrawal</span>';
+      }
+    });
+
+    async function loadWithdrawals() {
+      try {
+        const data = await API.withdrawal.getMyWithdrawals();
+        const container = document.getElementById('withdrawalsList');
+        
+        if (!data.withdrawals || data.withdrawals.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-arrow-up"></i></div><h3>No Withdrawals</h3><p>Your withdrawal history will appear here</p></div>`;
+          return;
+        }
+        
+        container.innerHTML = `
+          <div class="table-container">
+            <table class="table">
+              <thead><tr><th>Amount</th><th>Method</th><th>Status</th><th>Date</th></tr></thead>
+              <tbody>
+                ${data.withdrawals.map(w => `
+                  <tr>
+                    <td>${API.utils.formatCurrency(w.amount)}</td>
+                    <td>${w.type.toUpperCase()}</td>
+                    <td><span class="badge badge-${w.status === 'approved' ? 'success' : w.status === 'pending' ? 'warning' : 'danger'}">${w.status}</span></td>
+                    <td>${API.utils.formatDate(w.createdAt)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>`;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    loadData();
+
+    // Load unread message count
+    async function loadUnreadMessageCount() {
+      try {
+        const data = await API.message.getUnreadCount();
+        const badge = document.getElementById('messageBadge');
+        if (data.count > 0) {
+          badge.textContent = data.count > 99 ? '99+' : data.count;
+          badge.style.display = 'block';
+        } else {
+          badge.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error loading unread count:', error);
+      }
+    }
+
+    loadUnreadMessageCount();
+    loadUnreadMessageCount();
+
+    // Poll unread messages every 10 seconds
+    setInterval(loadUnreadMessageCount, 10000);
+  </script>
+
+   <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c317cf6b8b821c3ef15678/1jkh1a0mp';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>

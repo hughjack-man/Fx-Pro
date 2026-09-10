@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Coinnex - Banking & Investment Platform</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="shortcut icon" href="favicon-32x32.png" type="image/x-icon">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    :root {
+      /* Dark Mode (Default) */
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: rgba(30, 41, 59, 0.6);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --border: rgba(255, 255, 255, 0.05);
+      --shadow: rgba(0, 0, 0, 0.3);
+      --gradient-hero: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      --gradient-text: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+      --nav-bg: rgba(15, 23, 42, 0.9);
+    }
+    
+    [data-theme="light"] {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #eef2ff;
+      --bg-card: #ffffff;
+      --text-primary: #0f172a;
+      --text-secondary: #475569;
+      --text-muted: #64748b;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --border: #e2e8f0;
+      --shadow: rgba(15, 23, 42, 0.1);
+      --gradient-hero: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%);
+      --gradient-text: linear-gradient(135deg, #0f172a 0%, #64748b 100%);
+      --nav-bg: rgba(255, 255, 255, 0.85);
+    }
+    
+    html, body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--gradient-hero);
+      color: var(--text-primary);
+      min-height: 100vh;
+      line-height: 1.6;
+      overscroll-behavior-y: contain;
+      transition: all 0.3s ease;
+    }
+    
+    /* Navbar */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      background: var(--nav-bg);
+      backdrop-filter: blur(10px);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 1000;
+      border-bottom: 1px solid var(--border);
+      transition: all 0.3s ease;
+    }
+    
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    
+    .nav-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+    
+    .nav-btn {
+      padding: 0.625rem 1.5rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .nav-btn-outline {
+      background: transparent;
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+    }
+    
+    .nav-btn-outline:hover {
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--text-primary);
+    }
+    
+    .nav-btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white;
+    }
+    
+    .nav-btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+    
+    /* Theme Toggle */
+    .theme-toggle {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-secondary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      margin-right: 0.5rem;
+    }
+    
+    .theme-toggle:hover {
+      background: var(--accent);
+      color: white;
+      transform: rotate(15deg);
+    }
+    
+    /* Hero Section */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6rem 2rem 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 50%);
+      animation: pulse 15s ease-in-out infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.1); opacity: 0.8; }
+    }
+    
+    .hero-content {
+      text-align: center;
+      max-width: 900px;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    
+    .hero-image-card {
+      width: 120px;
+      height: 120px;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+      animation: float 6s ease-in-out infinite;
+      border: 2px solid rgba(99, 102, 241, 0.3);
+    }
+    
+    .hero-image-card:nth-child(2) {
+      animation-delay: -2s;
+      width: 140px;
+      height: 140px;
+      margin-top: -20px;
+    }
+    
+    .hero-image-card:nth-child(3) {
+      animation-delay: -4s;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-20px); }
+    }
+    
+    .hero-image-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      background: rgba(99, 102, 241, 0.2);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      border-radius: 20px;
+      font-size: 0.875rem;
+      color: #818cf8;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+    
+    .hero-title {
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 1.5rem;
+      background: var(--gradient-text);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    .hero-buttons {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 1rem 2rem;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4);
+    }
+    
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover {
+      background: var(--accent);
+      color: white;
+      border-color: var(--accent);
+    }
+    
+    /* Stats Section */
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      padding: 2rem;
+      flex-wrap: wrap;
+      margin-top: 2rem;
+    }
+    
+    .stat-item {
+      text-align: center;
+      padding: 1rem 2rem;
+      background: var(--bg-card);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
+    }
+    
+    .stat-item:hover {
+      transform: translateY(-5px);
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    
+    .stat-label {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+    }
+    
+    /* Features Section */
+    .features {
+      padding: 6rem 2rem;
+      background: var(--bg-secondary);
+      transition: all 0.3s ease;
+    }
+    
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 3rem;
+      color: var(--text-primary);
+    }
+    
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .feature-card:hover {
+      transform: translateY(-8px);
+      border-color: var(--accent);
+      box-shadow: 0 20px 40px var(--shadow);
+    }
+    
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(99, 102, 241, 0.2);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 1.5rem;
+      color: #818cf8;
+      transition: all 0.3s ease;
+    }
+    
+    .feature-card:hover .feature-icon {
+      transform: scale(1.1) rotate(5deg);
+      background: var(--accent);
+      color: white;
+    }
+    
+    .feature-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+    
+    .feature-desc {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+    
+    /* Subscription Plans Section */
+    .plans {
+      padding: 6rem 2rem;
+      background: var(--bg-primary);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .plans::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    }
+    
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .plan-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 2.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .plan-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 30px 60px var(--shadow);
+    }
+    
+    .plan-card.featured {
+      border: 2px solid var(--accent);
+      transform: scale(1.05);
+    }
+    
+    .plan-card.featured:hover {
+      transform: scale(1.05) translateY(-10px);
+    }
+    
+    .plan-badge {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: var(--accent);
+      color: white;
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-bottom-left-radius: 12px;
+    }
+    
+    .plan-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 70, 229, 0.2));
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1.5rem;
+      font-size: 2rem;
+      color: var(--accent);
+    }
+    
+    .plan-name {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-primary);
+    }
+    
+    .plan-price {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+    
+    .plan-price span {
+      font-size: 1rem;
+      color: var(--text-muted);
+      font-weight: 400;
+    }
+    
+    .plan-description {
+      color: var(--text-muted);
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+    }
+    
+    .plan-features {
+      list-style: none;
+      margin-bottom: 2rem;
+      text-align: left;
+    }
+    
+    .plan-features li {
+      padding: 0.75rem 0;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .plan-features li:last-child {
+      border-bottom: none;
+    }
+    
+    .plan-features i {
+      color: #10b981;
+      font-size: 1.1rem;
+    }
+    
+    .plan-btn {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 2px solid var(--accent);
+      background: transparent;
+      color: var(--accent);
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+    
+    .plan-btn:hover {
+      background: var(--accent);
+      color: white;
+      transform: translateY(-2px);
+    }
+    
+    .plan-card.featured .plan-btn {
+      background: var(--accent);
+      color: white;
+    }
+    
+    .plan-card.featured .plan-btn:hover {
+      background: var(--accent-hover);
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+    }
+    
+    /* Reviews Section */
+    .reviews {
+      padding: 6rem 2rem;
+      background: var(--bg-secondary);
+      position: relative;
+    }
+    
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .review-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 2rem;
+      transition: all 0.3s ease;
+      position: relative;
+    }
+    
+    .review-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 20px 40px var(--shadow);
+    }
+    
+    .review-stars {
+      color: #fbbf24;
+      margin-bottom: 1rem;
+      font-size: 1.1rem;
+    }
+    
+    .review-text {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      line-height: 1.8;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+    
+    .reviewer {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .reviewer-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--accent);
+    }
+    
+    .reviewer-info h4 {
+      color: var(--text-primary);
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .reviewer-info p {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    
+    .review-badge {
+      position: absolute;
+      top: 2rem;
+      right: 2rem;
+      background: rgba(99, 102, 241, 0.1);
+      color: var(--accent);
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+    
+    /* CTA Section */
+    .cta {
+      padding: 6rem 2rem;
+      text-align: center;
+      background: var(--bg-primary);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .cta::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    
+    .cta-title {
+      font-size: 2.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+      position: relative;
+      z-index: 1;
+    }
+    
+    .cta-subtitle {
+      color: var(--text-secondary);
+      margin-bottom: 2rem;
+      max-width: 500px;
+      margin-left: auto;
+      margin-right: auto;
+      position: relative;
+      z-index: 1;
+    }
+    
+    /* Footer */
+    .footer {
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+      text-align: center;
+      background: var(--bg-secondary);
+    }
+    
+    .footer-brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+    
+    .footer-text {
+      color: var(--text-muted);
+      font-size: 0.875rem;
+    }
+    
+    /* Mobile */
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2.5rem;
+      }
+      
+      .hero-image-card {
+        width: 80px;
+        height: 80px;
+      }
+      
+      .hero-image-card:nth-child(2) {
+        width: 100px;
+        height: 100px;
+      }
+      
+      .nav-links {
+        gap: 0.5rem;
+      }
+      
+      .nav-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.8rem;
+      }
+      
+      .stats {
+        gap: 1rem;
+      }
+      
+      .plan-card.featured {
+        transform: scale(1);
+      }
+      
+      .reviews-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .theme-toggle {
+        width: 35px;
+        height: 35px;
+      }
+    }
+    
+    /* Animations */
+    .fade-in {
+      animation: fadeIn 0.8s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .slide-in-left {
+      animation: slideInLeft 0.8s ease-out;
+    }
+    
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-50px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+        /* Side Popup Bonus Banner */
+    .side-bonus-popup {
+      position: absolute;
+      right: -320px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 280px;
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border-radius: 20px;
+      padding: 1.5rem;
+      box-shadow: 0 20px 60px rgba(99, 102, 241, 0.4);
+      z-index: 10;
+      animation: slideInSide 0.8s ease-out 1s forwards;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    @keyframes slideInSide {
+      0% { right: -320px; opacity: 0; }
+      70% { right: 30px; opacity: 1; }
+      100% { right: 20px; opacity: 1; }
+    }
+    
+    .side-bonus-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: white;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.8rem;
+      transition: all 0.3s ease;
+      z-index: 11;
+    }
+    
+    .side-bonus-close:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: rotate(90deg);
+    }
+    
+    .side-bonus-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      color: #fef3c7;
+      margin: 0 auto 1rem;
+      position: relative;
+      animation: iconPulse 2s infinite;
+    }
+    
+    .pulse-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 3px solid #fef3c7;
+      animation: ringPulse 2s infinite;
+    }
+    
+    @keyframes iconPulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+    }
+    
+    @keyframes ringPulse {
+      0% { transform: scale(1); opacity: 1; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    
+    .side-bonus-text {
+      text-align: center;
+      color: white;
+      margin-bottom: 1rem;
+    }
+    
+    .side-bonus-title {
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      opacity: 0.9;
+    }
+    
+    .side-bonus-amount {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #fef3c7;
+      text-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      margin-bottom: 0.5rem;
+      line-height: 1;
+    }
+    
+    .side-bonus-desc {
+      font-size: 0.8rem;
+      opacity: 0.9;
+      line-height: 1.4;
+    }
+    
+    .side-bonus-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      background: white;
+      color: #6366f1;
+      padding: 0.8rem 1.5rem;
+      border-radius: 25px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    }
+    
+    .side-bonus-btn:hover {
+      transform: translateY(-3px) scale(1.05);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    }
+    
+    /* Reset navbar - no offset needed */
+    .navbar {
+      top: 0;
+    }
+    
+    .hero {
+      padding-top: 6rem;
+    }
+    
+    /* Mobile responsive for side banner */
+    @media (max-width: 1024px) {
+      .side-bonus-popup {
+        position: relative;
+        right: auto;
+        top: auto;
+        transform: none;
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto 2rem;
+        animation: fadeInUp 0.8s ease-out 0.5s both;
+      }
+      
+      @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    }
+    
+       @media (max-width: 768px) {
+      .side-bonus-popup {
+        padding: 0.8rem;
+        max-width: 260px;
+        border-radius: 15px;
+      }
+      
+      .side-bonus-icon {
+        width: 40px;
+        height: 40px;
+        font-size: 1.2rem;
+        margin-bottom: 0.5rem;
+      }
+      
+      .side-bonus-title {
+        font-size: 0.75rem;
+      }
+      
+      .side-bonus-amount {
+        font-size: 1.6rem;
+      }
+      
+      .side-bonus-desc {
+        font-size: 0.7rem;
+      }
+      
+      .side-bonus-btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Navbar -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-logo">
+        <i class="fas fa-coins"></i>
+      </div>
+      Coinnex
+    </a>
+    <div class="nav-links">
+      <button class="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode">
+        <i class="fas fa-sun" id="theme-icon"></i>
+      </button>
+      <!-- <a href="user/login.html" class="nav-btn nav-btn-outline">Login</a> -->
+      <!-- <a href="user/register.html" class="nav-btn nav-btn-primary">Get Started</a> -->
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+
+      <!-- Side Popup Bonus Banner -->
+      <div class="side-bonus-popup" id="sideBonus">
+        <button class="side-bonus-close" onclick="closeSideBonus()">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="side-bonus-icon">
+          <i class="fas fa-gift"></i>
+          <span class="pulse-ring"></span>
+        </div>
+        <div class="side-bonus-text">
+          <div class="side-bonus-title">🎉 Welcome Bonus!</div>
+          <div class="side-bonus-amount">$50 FREE</div>
+          <div class="side-bonus-desc">Sign up now & get $50 instantly credited to your account</div>
+        </div>
+
+        
+        <a href="user/register.html" class="side-bonus-btn">
+          Claim Now <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+      
+      <div class="hero-visual fade-in">
+        <!-- ... rest of your hero content ... -->
+      <div class="hero-visual fade-in">
+        <div class="hero-image-card">
+          <img src="https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=400&auto=format&fit=crop&q=60" alt="Crypto Trading">
+        </div>
+        <div class="hero-image-card">
+          <img src="https://images.unsplash.com/photo-1553729459-efe14ef6055d?w=400&auto=format&fit=crop&q=60" alt="Investment Growth">
+        </div>
+        <div class="hero-image-card">
+          <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=400&auto=format&fit=crop&q=60" alt="Financial Analytics">
+        </div>
+      </div>
+      
+      <!-- <div class="hero-badge fade-in">
+        <i class="fas fa-sparkles"></i>
+        New: Crypto Investment Plans
+      </div> -->
+      <h1 class="hero-title fade-in">Banking & Investment Platform for the Future</h1>
+      <p class="hero-subtitle fade-in">
+        Invest in high-yield plans, manage your crypto portfolio, and grow your wealth with Coinnex's secure banking platform.
+      </p>
+      <div class="hero-buttons fade-in">
+        <a href="user/register.html" class="btn btn-primary">
+          <i class="fas fa-rocket"></i>
+          Start Investing
+        </a>
+        <a href="user/login.html" class="btn btn-secondary">
+          <i class="fas fa-sign-in-alt"></i>
+          Sign In
+        </a>
+      </div>
+      
+      <!-- <div class="stats fade-in">
+        <div class="stat-item">
+          <div class="stat-value">100%+</div>
+          <div class="stat-label">ROI on Investments</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">24/7</div>
+          <div class="stat-label">Customer Support</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value">100%</div>
+          <div class="stat-label">Secure Platform</div>
+        </div>
+      </div> -->
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <h2 class="section-title slide-in-left">Why Choose Coinnex?</h2>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-chart-line"></i>
+        </div>
+        <h3 class="feature-title">High-Yield Investments</h3>
+        <p class="feature-desc">Choose from multiple investment plans with competitive ROI rates and flexible durations.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fab fa-bitcoin"></i>
+        </div>
+        <h3 class="feature-title">Crypto Deposits</h3>
+        <p class="feature-desc">Deposit BTC easily and start earning. Secure wallet integration with fast processing.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-hand-holding-usd"></i>
+        </div>
+        <h3 class="feature-title">Loan Services</h3>
+        <p class="feature-desc">Get instant loans with competitive interest rates. Flexible repayment options available.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-shield-alt"></i>
+        </div>
+        <h3 class="feature-title">KYC Verified</h3>
+        <p class="feature-desc">Your security is our priority. Complete KYC verification for enhanced account protection.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <h3 class="feature-title">Referral Program</h3>
+        <p class="feature-desc">Earn bonuses by inviting friends. Get rewarded for every successful referral.</p>
+      </div>
+      
+      <div class="feature-card">
+        <div class="feature-icon">
+          <i class="fas fa-headset"></i>
+        </div>
+        <h3 class="feature-title">24/7 Support</h3>
+        <p class="feature-desc">Our dedicated support team is always ready to help you with any questions.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Investment Plans Section -->
+  <section class="plans">
+    <h2 class="section-title">Investment Plans</h2>
+    <div class="plans-grid">
+      <div class="plan-card">
+        <div class="plan-icon">
+          <i class="fas fa-seedling"></i>
+        </div>
+        <h3 class="plan-name">Starter Plan</h3>
+        <div class="plan-price">$100<span> / min investment</span></div>
+        <p class="plan-description">Perfect for beginners looking to start their investment journey</p>
+        <ul class="plan-features">
+          <li><i class="fas fa-check-circle"></i> 15% Monthly ROI</li>
+          <li><i class="fas fa-check-circle"></i> 3 Months Duration</li>
+          <li><i class="fas fa-check-circle"></i> Basic Support</li>
+          <li><i class="fas fa-check-circle"></i> Instant Withdrawal</li>
+          <li><i class="fas fa-check-circle"></i> Email Notifications</li>
+        </ul>
+        <a href="user/register.html" class="plan-btn">Get Started</a>
+      </div>
+      
+      <div class="plan-card featured">
+        <div class="plan-badge">POPULAR</div>
+        <div class="plan-icon">
+          <i class="fas fa-rocket"></i>
+        </div>
+        <h3 class="plan-name">Pro Plan</h3>
+        <div class="plan-price">$500<span> / min investment</span></div>
+        <p class="plan-description">Most popular choice for serious investors</p>
+        <ul class="plan-features">
+          <li><i class="fas fa-check-circle"></i> 25% Monthly ROI</li>
+          <li><i class="fas fa-check-circle"></i> 6 Months Duration</li>
+          <li><i class="fas fa-check-circle"></i> Priority Support</li>
+          <li><i class="fas fa-check-circle"></i> Instant Withdrawal</li>
+          <li><i class="fas fa-check-circle"></i> Advanced Analytics</li>
+          <li><i class="fas fa-check-circle"></i> Referral Bonuses</li>
+        </ul>
+        <a href="user/register.html" class="plan-btn">Get Started</a>
+      </div>
+      
+      <div class="plan-card">
+        <div class="plan-icon">
+          <i class="fas fa-crown"></i>
+        </div>
+        <h3 class="plan-name">Elite Plan</h3>
+        <div class="plan-price">$2,000<span> / min investment</span></div>
+        <p class="plan-description">Maximum returns for professional investors</p>
+        <ul class="plan-features">
+          <li><i class="fas fa-check-circle"></i> 35% Monthly ROI</li>
+          <li><i class="fas fa-check-circle"></i> 12 Months Duration</li>
+          <li><i class="fas fa-check-circle"></i> 24/7 VIP Support</li>
+          <li><i class="fas fa-check-circle"></i> Instant Withdrawal</li>
+          <li><i class="fas fa-check-circle"></i> Personal Account Manager</li>
+          <li><i class="fas fa-check-circle"></i> Exclusive Investment Deals</li>
+          <li><i class="fas fa-check-circle"></i> Zero Transaction Fees</li>
+        </ul>
+        <a href="user/register.html" class="plan-btn">Get Started</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Reviews Section -->
+  <section class="reviews">
+    <h2 class="section-title">What Our Investors Say</h2>
+    <div class="reviews-grid">
+      <div class="review-card">
+        <div class="review-badge">Verified Investor</div>
+        <div class="review-stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <p class="review-text">"Coinnex has completely transformed my investment strategy. The Pro Plan gave me 25% monthly returns consistently. The platform is intuitive and withdrawals are instant. Best investment decision I've made!"</p>
+        <div class="reviewer">
+          <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&auto=format&fit=crop&q=60" alt="Michael Chen" class="reviewer-avatar">
+          <div class="reviewer-info">
+            <h4>Michael Chen</h4>
+            <p>Pro Plan Investor • 8 Months</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="review-card">
+        <div class="review-badge">Verified Investor</div>
+        <div class="review-stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <p class="review-text">"Started with the Starter Plan to test the waters, and I was impressed by the transparency and support. Upgraded to Elite after 3 months. The personal account manager is incredibly helpful!"</p>
+        <div class="reviewer">
+          <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&auto=format&fit=crop&q=60" alt="Sarah Johnson" class="reviewer-avatar">
+          <div class="reviewer-info">
+            <h4>Sarah Johnson</h4>
+            <p>Elite Plan Investor • 1 Year</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="review-card">
+        <div class="review-badge">Verified Investor</div>
+        <div class="review-stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star-half-alt"></i>
+        </div>
+        <p class="review-text">"The crypto deposit feature is seamless. I've tried multiple platforms, but Coinnex's security and speed are unmatched. Made my first withdrawal within 24 hours of requesting. Highly recommended!"</p>
+        <div class="reviewer">
+          <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100&auto=format&fit=crop&q=60" alt="David Okonkwo" class="reviewer-avatar">
+          <div class="reviewer-info">
+            <h4>David Okonkwo</h4>
+            <p>Starter Plan Investor • 5 Months</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="review-card">
+        <div class="review-badge">Top Earner</div>
+        <div class="review-stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <p class="review-text">"As a crypto trader, I needed a reliable platform for long-term holds. Coinnex delivers exactly that. The referral program is also lucrative - earned an extra $2,000 just from inviting my network!"</p>
+        <div class="reviewer">
+          <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=100&auto=format&fit=crop&q=60" alt="James Wilson" class="reviewer-avatar">
+          <div class="reviewer-info">
+            <h4>James Wilson</h4>
+            <p>Elite Plan Investor • 2 Years</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="review-card">
+        <div class="review-badge">Verified Investor</div>
+        <div class="review-stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <p class="review-text">"Customer support is phenomenal. Had an issue with my KYC verification at 2 AM, and they resolved it within 30 minutes. That's the kind of service that builds trust. My portfolio has grown 300%!"</p>
+        <div class="reviewer">
+          <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&auto=format&fit=crop&q=60" alt="Emma Rodriguez" class="reviewer-avatar">
+          <div class="reviewer-info">
+            <h4>Emma Rodriguez</h4>
+            <p>Pro Plan Investor • 1 Year</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="review-card">
+        <div class="review-badge">Verified Investor</div>
+        <div class="review-stars">
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+          <i class="fas fa-star"></i>
+        </div>
+        <p class="review-text">"The loan feature saved my business during a cash flow crunch. Low interest rates and flexible repayment terms. Coinnex isn't just an investment platform, it's a complete financial ecosystem."</p>
+        <div class="reviewer">
+          <img src="https://images.unsplash.com/photo-1560250097-0b93528c311a?w=100&auto=format&fit=crop&q=60" alt="Robert Kim" class="reviewer-avatar">
+          <div class="reviewer-info">
+            <h4>Robert Kim</h4>
+            <p>Pro Plan Investor • 6 Months</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA Section -->
+  <section class="cta">
+    <h2 class="cta-title">Ready to Start Your Journey?</h2>
+    <p class="cta-subtitle">Join thousands of investors who trust Coinnex for their financial growth.</p>
+    <a href="user/register.html" class="btn btn-primary">
+      <i class="fas fa-user-plus"></i>
+      Create Free Account
+    </a>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-brand">
+      <div class="nav-logo">
+        <i class="fas fa-coins"></i>
+      </div>
+      Coinnex
+    </div>
+    <p class="footer-text">&copy; 2024 Coinnex. All rights reserved. Secure banking & investment platform.</p>
+  </footer>
+
+  <script src="js/api.js"></script>
+  <script>
+    // Auto-redirect if already logged in
+    if (API.utils.isAuthenticated()) {
+      const user = API.utils.getUser();
+      if (user && user.role === 'admin') {
+        window.location.href = 'admin/dashboard.html';
+      } else {
+        window.location.href = 'user/dashboard.html';
+      }
+    }
+    
+    // Theme Toggle Functionality
+    function toggleTheme() {
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+      const currentTheme = html.getAttribute('data-theme');
+      const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      
+      html.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      
+      // Update icon
+      if (newTheme === 'light') {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+      } else {
+        icon.classList.remove('fa-moon');
+        icon.classList.add('fa-sun');
+      }
+    }
+    
+    // Load saved theme on page load
+    document.addEventListener('DOMContentLoaded', function() {
+      const savedTheme = localStorage.getItem('theme') || 'dark';
+      const html = document.documentElement;
+      const icon = document.getElementById('theme-icon');
+      
+      html.setAttribute('data-theme', savedTheme);
+      
+      if (savedTheme === 'light') {
+        icon.classList.remove('fa-sun');
+        icon.classList.add('fa-moon');
+      }
+    });
+    
+    // Intersection Observer for scroll animations
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+    
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+    
+    // Observe all cards
+    document.querySelectorAll('.feature-card, .plan-card, .review-card').forEach((el) => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(20px)';
+      el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+      observer.observe(el);
+    });
+
+        // Close side bonus popup
+    function closeSideBonus() {
+      const popup = document.getElementById('sideBonus');
+      popup.style.transform = 'translateX(150%)';
+      popup.style.opacity = '0';
+      popup.style.transition = 'all 0.5s ease';
+      
+      setTimeout(() => {
+        popup.remove();
+      }, 500);
+    }
+    
+    // Auto-close after 15 seconds (optional)
+    setTimeout(() => {
+      const popup = document.getElementById('sideBonus');
+      if (popup) {
+        closeSideBonus();
+      }
+    }, 50000);
+  </script>
+  <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c317cf6b8b821c3ef15678/1jkh1a0mp';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>

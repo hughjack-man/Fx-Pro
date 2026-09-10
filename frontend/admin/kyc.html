@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.8">
+  <title>KYC - Coinnex Admin</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fas fa-coins"></i></div>
+        <span class="sidebar-brand">Coinnex Admin</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Admin</div>
+          <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+          <a href="users.html" class="nav-item"><i class="fas fa-users"></i><span>Users</span></a>
+          <a href="deposits.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposits</span></a>
+          <a href="withdrawals.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdrawals</span></a>
+          <a href="investments.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Investments</span></a>
+          <a href="investment-plans.html" class="nav-item"><i class="fas fa-gem"></i><span>Plans</span></a>
+          <a href="loans.html" class="nav-item"><i class="fas fa-hand-holding-usd"></i><span>Loans</span></a>
+          <a href="kyc.html" class="nav-item active"><i class="fas fa-id-card"></i><span>KYC</span></a>
+          <a href="messages.html" class="nav-item"><i class="fas fa-envelope"></i><span>Messages</span></a>
+          <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+          <a href="logs.html" class="nav-item"><i class="fas fa-history"></i><span>Logs</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+          <h1 class="page-title">KYC Verification</h1>
+        </div>
+        <div class="header-right">
+          <!-- <button class="header-btn" onclick="API.auth.logout()"><i class="fas fa-sign-out-alt"></i></button> -->
+          <div class="user-menu">
+            <div class="user-avatar">A</div>
+            <div class="user-info">
+              <div class="user-name">Admin</div>
+              <div class="user-role">Administrator</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+        
+        <div class="card" style="width: 32rem;">
+          <div class="card-header">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
+              <select class="form-select" id="statusFilter" style="width: 150px;" onchange="loadKYC()">
+                <option value="">All</option>
+                <option value="pending" selected>Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <button class="btn btn-primary" onclick="loadKYC()">
+                <i class="fas fa-sync"></i><span>Refresh</span>
+              </button>
+            </div>
+          </div>
+          <div class="card-body">
+            <div id="kycList"><div class="loading"><div class="spinner"></div></div></div>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- View Modal -->
+  <div class="modal-overlay" id="viewModal" style="display: none;">
+    <div class="modal" style="max-width: 800px;">
+      <div class="modal-header">
+        <h3 class="modal-title">KYC Details</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="kycDetails"></div>
+      </div>
+      <div class="modal-footer" id="modalActions">
+        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reject Modal -->
+  <div class="modal-overlay" id="rejectModal" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Reject KYC</h3>
+        <button class="modal-close" onclick="closeRejectModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="rejectKycId">
+        <div class="form-group">
+          <label class="form-label">Reason</label>
+          <textarea class="form-textarea" id="rejectReason" placeholder="Enter reason for rejection..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeRejectModal()">Cancel</button>
+        <button class="btn btn-danger" onclick="confirmReject()">Reject KYC</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/notification.js"></script>
+  <script>
+    if (!API.utils.isAuthenticated() || !API.utils.isAdmin()) {
+      window.location.href = '../user/login.html';
+    }
+
+    // Menu toggle for mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (window.innerWidth <= 1024) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1024) {
+        closeSidebar();
+      }
+    });
+
+    async function loadKYC(page = 1) {
+      try {
+        const status = document.getElementById('statusFilter').value;
+        const data = await API.kyc.getAll(status, page, 20);
+        
+        const container = document.getElementById('kycList');
+        if (!data.kycs || data.kycs.length === 0) {
+          container.innerHTML = `<div class="empty-state"><p>No KYC submissions found</p></div>`;
+          document.getElementById('pagination').innerHTML = '';
+          return;
+        }
+        
+        container.innerHTML = `
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>ID Type</th>
+                  <th>ID Number</th>
+                  <th>Status</th>
+                  <th>Submitted</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.kycs.map(k => `
+                  <tr>
+                    <td>${k.userId?.name || 'User'}<br><small style="color: var(--gray);">${k.userId?.email || ''}</small></td>
+                    <td>${k.idType.replace('_', ' ')}</td>
+                    <td>${k.idNumber}</td>
+                    <td><span class="badge badge-${k.status === 'approved' ? 'success' : k.status === 'pending' ? 'warning' : 'danger'}">${k.status}</span></td>
+                    <td>${API.utils.formatDate(k.createdAt)}</td>
+                    <td>
+                      <button class="btn btn-sm btn-primary" onclick="viewKYC('${k._id}', '${k.idType}', '${k.idNumber}', '${k.frontImage}', '${k.backImage}', '${k.selfieImage}', '${k.status}', '${k.userId?.name}', '${k.userId?.email}')">
+                        <i class="fas fa-eye"></i> View
+                      </button>
+                    </td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>`;
+        
+        const pagination = document.getElementById('pagination');
+        if (data.pagination.pages > 1) {
+          let html = `<button class="pagination-btn" ${page === 1 ? 'disabled' : ''} onclick="loadKYC(${page - 1})"><i class="fas fa-chevron-left"></i></button>`;
+          for (let i = 1; i <= data.pagination.pages; i++) {
+            html += `<button class="pagination-btn ${i === page ? 'active' : ''}" onclick="loadKYC(${i})">${i}</button>`;
+          }
+          html += `<button class="pagination-btn" ${page === data.pagination.pages ? 'disabled' : ''} onclick="loadKYC(${page + 1})"><i class="fas fa-chevron-right"></i></button>`;
+          pagination.innerHTML = html;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function viewKYC(id, idType, idNumber, frontImage, backImage, selfieImage, status, userName, userEmail) {
+      const baseUrl = window.location.origin;
+      document.getElementById('kycDetails').innerHTML = `
+        <div style="margin-bottom: 1.5rem;">
+          <div style="font-weight: 600; font-size: 1.1rem;">${userName}</div>
+          <div style="color: var(--gray);">${userEmail}</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+          <div><div style="color: var(--gray); font-size: 0.875rem;">ID Type</div><div style="font-weight: 500;">${idType.replace('_', ' ')}</div></div>
+          <div><div style="color: var(--gray); font-size: 0.875rem;">ID Number</div><div style="font-weight: 500;">${idNumber}</div></div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+          <div>
+            <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Front Image</div>
+            <img src="${baseUrl}${frontImage}" style="width: 100%; border-radius: 8px; cursor: pointer;" onclick="window.open('${baseUrl}${frontImage}')">
+          </div>
+          <div>
+            <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Back Image</div>
+            <img src="${baseUrl}${backImage}" style="width: 100%; border-radius: 8px; cursor: pointer;" onclick="window.open('${baseUrl}${backImage}')">
+          </div>
+          ${selfieImage ? `
+          <div>
+            <div style="color: var(--gray); font-size: 0.875rem; margin-bottom: 0.5rem;">Selfie</div>
+            <img src="${baseUrl}${selfieImage}" style="width: 100%; border-radius: 8px; cursor: pointer;" onclick="window.open('${baseUrl}${selfieImage}')">
+          </div>
+          ` : ''}
+        </div>
+      `;
+      
+      const actions = document.getElementById('modalActions');
+      if (status === 'pending') {
+        actions.innerHTML = `
+          <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+          <button class="btn btn-danger" onclick="openRejectModal('${id}')">Reject</button>
+          <button class="btn btn-success" onclick="approveKYC('${id}')">Approve</button>
+        `;
+      } else {
+        actions.innerHTML = `<button class="btn btn-secondary" onclick="closeModal()">Close</button>`;
+      }
+      
+      document.getElementById('viewModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('viewModal').style.display = 'none';
+    }
+
+    function openRejectModal(id) {
+      closeModal();
+      document.getElementById('rejectKycId').value = id;
+      document.getElementById('rejectModal').style.display = 'flex';
+    }
+
+    function closeRejectModal() {
+      document.getElementById('rejectModal').style.display = 'none';
+      document.getElementById('rejectReason').value = '';
+    }
+
+    async function approveKYC(id) {
+      if (!confirm('Are you sure you want to approve this KYC?')) return;
+      
+      try {
+        await API.kyc.approve(id);
+        API.utils.showAlert('KYC approved successfully', 'success');
+        closeModal();
+        loadKYC();
+      } catch (error) {
+        API.utils.showAlert(error.message, 'danger');
+      }
+    }
+
+    async function confirmReject() {
+      const id = document.getElementById('rejectKycId').value;
+      const reason = document.getElementById('rejectReason').value;
+      
+      try {
+        await API.kyc.reject(id, reason);
+        API.utils.showAlert('KYC rejected', 'success');
+        closeRejectModal();
+        loadKYC();
+      } catch (error) {
+        API.utils.showAlert(error.message, 'danger');
+      }
+    }
+
+    loadKYC();
+  </script>
+</body>
+</html>

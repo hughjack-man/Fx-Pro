@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.7" >
+  <title>Admin Dashboard - Coinnex</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fas fa-coins"></i></div>
+        <span class="sidebar-brand">Coinnex Admin</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Admin</div>
+          <a href="dashboard.html" class="nav-item active"><i class="fas fa-home"></i><span>Dashboard</span></a>
+          <a href="users.html" class="nav-item"><i class="fas fa-users"></i><span>Users</span></a>
+          <a href="deposits.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposits</span></a>
+          <a href="withdrawals.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdrawals</span></a>
+          <a href="investments.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Investments</span></a>
+          <a href="investment-plans.html" class="nav-item"><i class="fas fa-gem"></i><span>Investment Plans</span></a>
+          <a href="loans.html" class="nav-item"><i class="fas fa-hand-holding-usd"></i><span>Loans</span></a>
+          <a href="kyc.html" class="nav-item"><i class="fas fa-id-card"></i><span>KYC</span></a>
+          <a href="messages.html" class="nav-item"><i class="fas fa-envelope"></i><span>Messages</span></a>
+          <a href="settings.html" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+          <a href="logs.html" class="nav-item"><i class="fas fa-history"></i><span>Logs</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+          <h1 class="page-title">Admin Dashboard</h1>
+        </div>
+        <div class="header-right">
+          <button class="header-btn" onclick="window.location.href='../user/dashboard.html'">
+            <i class="fas fa-user"></i>
+          </button>
+          <button class="header-btn" onclick="API.auth.logout()">
+            <i class="fas fa-sign-out-alt"></i>
+          </button>
+          <div class="user-menu">
+            <div class="user-avatar" id="userAvatar">A</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">Admin</div>
+              <div class="user-role">Administrator</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+        
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Total Users</span>
+              <div class="stat-icon primary"><i class="fas fa-users"></i></div>
+            </div>
+            <div class="stat-value" id="totalUsers">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Total Deposits</span>
+              <div class="stat-icon success"><i class="fas fa-arrow-down"></i></div>
+            </div>
+            <div class="stat-value" id="totalDeposits">$0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Total Withdrawals</span>
+              <div class="stat-icon danger"><i class="fas fa-arrow-up"></i></div>
+            </div>
+            <div class="stat-value" id="totalWithdrawals">$0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-header">
+              <span class="stat-title">Active Investments</span>
+              <div class="stat-icon warning"><i class="fas fa-chart-line"></i></div>
+            </div>
+            <div class="stat-value" id="totalInvestments">$0</div>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns: repeat(4, 1fr);">
+          <div class="stat-card" style="border-left: 3px solid var(--warning);">
+            <div class="stat-header">
+              <span class="stat-title">Pending Deposits</span>
+              <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+            </div>
+            <div class="stat-value" id="pendingDeposits">0</div>
+          </div>
+          <div class="stat-card" style="border-left: 3px solid var(--warning);">
+            <div class="stat-header">
+              <span class="stat-title">Pending Withdrawals</span>
+              <div class="stat-icon warning"><i class="fas fa-clock"></i></div>
+            </div>
+            <div class="stat-value" id="pendingWithdrawals">0</div>
+          </div>
+          <div class="stat-card" style="border-left: 3px solid var(--info);">
+            <div class="stat-header">
+              <span class="stat-title">Pending KYC</span>
+              <div class="stat-icon info"><i class="fas fa-id-card"></i></div>
+            </div>
+            <div class="stat-value" id="pendingKYC">0</div>
+          </div>
+          <div class="stat-card" style="border-left: 3px solid var(--info);">
+            <div class="stat-header">
+              <span class="stat-title">Pending Loans</span>
+              <div class="stat-icon info"><i class="fas fa-hand-holding-usd"></i></div>
+            </div>
+            <div class="stat-value" id="pendingLoans">0</div>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Recent Transactions</h3>
+              <a href="../user/transactions.html" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body">
+              <div id="recentTransactions"><div class="loading"><div class="spinner"></div></div></div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">New Users</h3>
+              <a href="users.html" class="btn btn-sm btn-primary">View All</a>
+            </div>
+            <div class="card-body">
+              <div id="recentUsers"><div class="loading"><div class="spinner"></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/notification.js"></script>
+  <script>
+    if (!API.utils.isAuthenticated() || !API.utils.isAdmin()) {
+      window.location.href = '../user/login.html';
+    }
+
+    // Menu toggle for mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (window.innerWidth <= 1024) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1024) {
+        closeSidebar();
+      }
+    });
+
+    async function loadData() {
+      try {
+        const user = API.utils.getUser();
+        document.getElementById('userName').textContent = user.name;
+        document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
+        
+        const data = await API.admin.getDashboard();
+        
+        document.getElementById('totalUsers').textContent = data.stats.totalUsers;
+        document.getElementById('totalDeposits').textContent = API.utils.formatCurrency(data.stats.totalDeposits);
+        document.getElementById('totalWithdrawals').textContent = API.utils.formatCurrency(data.stats.totalWithdrawals);
+        document.getElementById('totalInvestments').textContent = API.utils.formatCurrency(data.stats.totalInvestments);
+        document.getElementById('pendingDeposits').textContent = data.stats.pendingDeposits;
+        document.getElementById('pendingWithdrawals').textContent = data.stats.pendingWithdrawals;
+        document.getElementById('pendingKYC').textContent = data.stats.pendingKYC;
+        document.getElementById('pendingLoans').textContent = data.stats.pendingLoans;
+        
+        // Recent transactions
+        const txContainer = document.getElementById('recentTransactions');
+        if (data.recentTransactions && data.recentTransactions.length > 0) {
+          txContainer.innerHTML = `
+            <div class="table-container">
+              <table class="table">
+                <thead><tr><th>User</th><th>Type</th><th>Amount</th><th>Status</th></tr></thead>
+                <tbody>
+                  ${data.recentTransactions.map(tx => `
+                    <tr>
+                      <td>${tx.userId?.name || 'User'}</td>
+                      <td>${tx.type}</td>
+                      <td>${API.utils.formatCurrency(tx.amount)}</td>
+                      <td><span class="badge badge-${tx.status === 'completed' ? 'success' : 'warning'}">${tx.status}</span></td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>`;
+        } else {
+          txContainer.innerHTML = `<div class="empty-state"><p>No recent transactions</p></div>`;
+        }
+        
+        // Recent users
+        const usersContainer = document.getElementById('recentUsers');
+        if (data.recentUsers && data.recentUsers.length > 0) {
+          usersContainer.innerHTML = `
+            <div class="table-container">
+              <table class="table">
+                <thead><tr><th>Name</th><th>Email</th><th>Joined</th></tr></thead>
+                <tbody>
+                  ${data.recentUsers.map(u => `
+                    <tr>
+                      <td>${u.name}</td>
+                      <td>${u.email}</td>
+                      <td>${API.utils.formatDate(u.createdAt)}</td>
+                    </tr>
+                  `).join('')}
+                </tbody>
+              </table>
+            </div>`;
+        } else {
+          usersContainer.innerHTML = `<div class="empty-state"><p>No recent users</p></div>`;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        API.utils.showAlert('Failed to load dashboard data', 'danger');
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>

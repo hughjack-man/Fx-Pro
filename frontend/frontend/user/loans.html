@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.8">
+  <title>Loans - Coinnex</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fas fa-coins"></i></div>
+        <span class="sidebar-brand">Coinnex</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+          <a href="deposit.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposit</span></a>
+          <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+          <a href="invest.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Invest</span></a>
+          <a href="loans.html" class="nav-item active"><i class="fas fa-hand-holding-usd"></i><span>Loans</span></a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Account</div>
+          <a href="transactions.html" class="nav-item"><i class="fas fa-list"></i><span>Transactions</span></a>
+          <a href="referrals.html" class="nav-item"><i class="fas fa-users"></i><span>Referrals</span></a>
+          <a href="kyc.html" class="nav-item"><i class="fas fa-id-card"></i><span>KYC</span></a>
+          <a href="wallet-settings.html" class="nav-item"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+          <a href="support.html" class="nav-item"><i class="fas fa-headset"></i><span>Support</span></a>
+          <a href="user-settings.html" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+          <h1 class="page-title">Loan Services</h1>
+        </div>
+        <div class="header-right">
+          <!-- <button class="header-btn" onclick="API.auth.logout()"><i class="fas fa-sign-out-alt"></i></button> -->
+          <div class="user-menu">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">User</div>
+              <div class="user-role">Investor</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-hand-holding-usd" style="color: var(--primary); margin-right: 0.5rem;"></i>Available Loan Plans</h3>
+          </div>
+          <div class="card-body">
+            <div id="loanPlans" class="plans-grid">
+              <div class="loading"><div class="spinner"></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header"><h3 class="card-title">My Loans</h3></div>
+          <div class="card-body">
+            <div id="myLoans"><div class="loading"><div class="spinner"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Loan Modal -->
+  <div class="modal-overlay" id="loanModal" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">Apply for <span id="modalPlanName"></span></h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="alert alert-info">
+          <i class="fas fa-info-circle"></i>
+          <span>Interest: <strong id="modalInterest"></strong>% | Duration: <strong id="modalDuration"></strong> months</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Loan Amount (USD)</label>
+          <div style="position: relative;">
+            <span style="position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #64748b;">$</span>
+            <input type="number" class="form-input" id="loanAmount" style="padding-left: 2rem;">
+          </div>
+          <p class="form-hint">Min: $<span id="modalMin"></span> | Max: $<span id="modalMax"></span></p>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Loan Purpose</label>
+          <textarea class="form-textarea" id="loanPurpose" placeholder="Briefly describe the purpose of this loan"></textarea>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: 10px;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+            <span style="color: var(--gray);">Total Repayable:</span>
+            <span style="font-weight: 600;" id="totalRepayable">$0.00</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--gray);">Monthly Payment:</span>
+            <span style="font-weight: 600; color: var(--primary);" id="monthlyPayment">$0.00</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn btn-primary" id="confirmLoanBtn" onclick="confirmLoan()">
+          <i class="fas fa-check"></i><span>Apply for Loan</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/notification.js"></script>
+  <script src="../js/tawkto.js"></script>
+  <script>
+    if (!API.utils.isAuthenticated()) window.location.href = 'login.html';
+    
+    // Menu toggle for mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (window.innerWidth <= 1024) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1024) {
+        closeSidebar();
+      }
+    });
+
+    let currentPlan = null;
+    let plans = [];
+
+    async function loadData() {
+      try {
+        const userData = await API.user.getDashboard();
+        document.getElementById('userName').textContent = userData.user.name;
+        document.getElementById('userAvatar').textContent = userData.user.name.charAt(0).toUpperCase();
+        
+        loadLoanPlans();
+        loadMyLoans();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function loadLoanPlans() {
+      try {
+        const data = await API.loan.getPlans();
+        plans = data.plans;
+        const container = document.getElementById('loanPlans');
+        
+        if (!plans || plans.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-hand-holding-usd"></i></div><h3>No Loan Plans</h3><p>Check back later for loan options</p></div>`;
+          return;
+        }
+        
+        container.innerHTML = plans.map(plan => `
+          <div class="plan-card">
+            <div class="plan-name">${plan.name}</div>
+            <div class="plan-roi">${plan.interestRate}<span>% Interest</span></div>
+            <div class="plan-duration"><i class="fas fa-calendar"></i> ${plan.durationMonths} Months</div>
+            <div class="plan-limits">
+              <div class="plan-limit"><span class="plan-limit-label">Minimum</span><span class="plan-limit-value">$${plan.minAmount?.toLocaleString() || '100'}</span></div>
+              <div class="plan-limit"><span class="plan-limit-label">Maximum</span><span class="plan-limit-value">$${plan.maxAmount.toLocaleString()}</span></div>
+            </div>
+            <button class="btn btn-primary btn-block" onclick="openLoanModal('${plan._id}')">
+              <i class="fas fa-hand-holding-usd"></i><span>Apply Now</span>
+            </button>
+          </div>
+        `).join('');
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function loadMyLoans() {
+      try {
+        const data = await API.loan.getMyLoans();
+        const container = document.getElementById('myLoans');
+        
+        if (!data.loans || data.loans.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-hand-holding-usd"></i></div><h3>No Loans Yet</h3><p>Apply for a loan to see it here</p></div>`;
+          return;
+        }
+        
+        container.innerHTML = `
+          <div class="table-container">
+            <table class="table">
+              <thead><tr><th>Plan</th><th>Amount</th><th>Interest</th><th>Monthly</th><th>Status</th></tr></thead>
+              <tbody>
+                ${data.loans.map(loan => `
+                  <tr>
+                    <td>${loan.planId?.name || 'Loan'}</td>
+                    <td>${API.utils.formatCurrency(loan.amount)}</td>
+                    <td>${loan.interestRate}%</td>
+                    <td>${API.utils.formatCurrency(loan.monthlyPayment)}</td>
+                    <td><span class="badge badge-${loan.status === 'active' || loan.status === 'approved' ? 'success' : loan.status === 'pending' ? 'warning' : 'danger'}">${loan.status}</span></td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>`;
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function openLoanModal(planId) {
+      currentPlan = plans.find(p => p._id === planId);
+      if (!currentPlan) return;
+      
+      document.getElementById('modalPlanName').textContent = currentPlan.name;
+      document.getElementById('modalInterest').textContent = currentPlan.interestRate;
+      document.getElementById('modalDuration').textContent = currentPlan.durationMonths;
+      document.getElementById('modalMin').textContent = currentPlan.minAmount || 100;
+      document.getElementById('modalMax').textContent = currentPlan.maxAmount;
+      document.getElementById('loanAmount').value = '';
+      document.getElementById('loanAmount').min = currentPlan.minAmount || 100;
+      document.getElementById('loanAmount').max = currentPlan.maxAmount;
+      document.getElementById('loanPurpose').value = '';
+      updateLoanCalc();
+      
+      document.getElementById('loanModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('loanModal').style.display = 'none';
+      currentPlan = null;
+    }
+
+    function updateLoanCalc() {
+      if (!currentPlan) return;
+      const amount = parseFloat(document.getElementById('loanAmount').value) || 0;
+      const interest = amount * (currentPlan.interestRate / 100);
+      const total = amount + interest;
+      const monthly = total / currentPlan.durationMonths;
+      document.getElementById('totalRepayable').textContent = API.utils.formatCurrency(total);
+      document.getElementById('monthlyPayment').textContent = API.utils.formatCurrency(monthly);
+    }
+
+    document.getElementById('loanAmount').addEventListener('input', updateLoanCalc);
+
+    async function confirmLoan() {
+      if (!currentPlan) return;
+      
+      const amount = parseFloat(document.getElementById('loanAmount').value);
+      const purpose = document.getElementById('loanPurpose').value;
+      
+      if (amount < (currentPlan.minAmount || 100)) {
+        API.utils.showAlert(`Minimum loan amount is $${currentPlan.minAmount || 100}`, 'warning');
+        return;
+      }
+      if (amount > currentPlan.maxAmount) {
+        API.utils.showAlert(`Maximum loan amount is $${currentPlan.maxAmount}`, 'warning');
+        return;
+      }
+      
+      const btn = document.getElementById('confirmLoanBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<div class="spinner" style="width: 16px; height: 16px; border-width: 2px;"></div>';
+      
+      try {
+        await API.loan.request({ planId: currentPlan._id, amount, purpose });
+        API.utils.showAlert('Loan application submitted!', 'success');
+        closeModal();
+        loadMyLoans();
+      } catch (error) {
+        API.utils.showAlert(error.message, 'danger');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-check"></i><span>Apply for Loan</span>';
+      }
+    }
+
+    loadData();
+
+    // Load unread message count
+    async function loadUnreadMessageCount() {
+      try {
+        const data = await API.message.getUnreadCount();
+        const badge = document.getElementById('messageBadge');
+        if (data.count > 0) {
+          badge.textContent = data.count > 99 ? '99+' : data.count;
+          badge.style.display = 'block';
+        } else {
+          badge.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error loading unread count:', error);
+      }
+    }
+
+    loadUnreadMessageCount();
+    loadUnreadMessageCount();
+
+    // Poll unread messages every 10 seconds
+    setInterval(loadUnreadMessageCount, 10000);
+  </script>
+
+  <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c1c6ec91de1e1c374ca128/1jkef23cl';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>

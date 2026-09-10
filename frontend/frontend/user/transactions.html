@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.7">
+  <title>Transactions - Coinnex</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+  <div class="app-container">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo"><i class="fas fa-coins"></i></div>
+        <span class="sidebar-brand">Coinnex</span>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Main</div>
+          <a href="dashboard.html" class="nav-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+          <a href="deposit.html" class="nav-item"><i class="fas fa-arrow-down"></i><span>Deposit</span></a>
+          <a href="withdraw.html" class="nav-item"><i class="fas fa-arrow-up"></i><span>Withdraw</span></a>
+          <a href="invest.html" class="nav-item"><i class="fas fa-chart-line"></i><span>Invest</span></a>
+          <a href="loans.html" class="nav-item"><i class="fas fa-hand-holding-usd"></i><span>Loans</span></a>
+        </div>
+        <div class="nav-section">
+          <div class="nav-section-title">Account</div>
+          <a href="transactions.html" class="nav-item active"><i class="fas fa-list"></i><span>Transactions</span></a>
+          <a href="referrals.html" class="nav-item"><i class="fas fa-users"></i><span>Referrals</span></a>
+          <a href="kyc.html" class="nav-item"><i class="fas fa-id-card"></i><span>KYC</span></a>
+          <a href="wallet-settings.html" class="nav-item"><i class="fas fa-wallet"></i><span>Wallet</span></a>
+          <a href="support.html" class="nav-item"><i class="fas fa-headset"></i><span>Support</span></a>
+          <a href="user-settings.html" class="nav-item"><i class="fas fa-cog"></i><span>Settings</span></a>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <header class="header">
+        <div class="header-left">
+          <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+          <h1 class="page-title">Transaction History</h1>
+        </div>
+        <div class="header-right">
+          <!-- <button class="header-btn" onclick="API.auth.logout()"><i class="fas fa-sign-out-alt"></i></button> -->
+          <div class="user-menu">
+            <div class="user-avatar" id="userAvatar">U</div>
+            <div class="user-info">
+              <div class="user-name" id="userName">User</div>
+              <div class="user-role">Investor</div>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div id="alertContainer"></div>
+        
+        <div class="card">
+          <div class="card-header">
+            <h3 class="card-title"><i class="fas fa-list-alt" style="color: var(--primary); margin-right: 0.5rem;"></i>All Transactions</h3>
+          </div>
+          <div class="card-body">
+            <div id="transactionsList"><div class="loading"><div class="spinner"></div></div></div>
+            <div class="pagination" id="pagination"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../js/api.js"></script>
+  <script src="../js/notification.js"></script>
+  <script src="../js/tawkto.js"></script>
+  <script>
+    if (!API.utils.isAuthenticated()) window.location.href = 'login.html';
+    
+    // Menu toggle for mobile
+    function toggleSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+
+      if (window.innerWidth <= 1024) {
+        sidebar.classList.toggle('open');
+        overlay.classList.toggle('show');
+      } else {
+        sidebar.classList.toggle('collapsed');
+      }
+    }
+
+    function closeSidebar() {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('sidebarOverlay');
+      sidebar.classList.remove('open');
+      overlay.classList.remove('show');
+    }
+
+    document.getElementById('menuToggle').addEventListener('click', toggleSidebar);
+
+    // Close sidebar on window resize to desktop
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 1024) {
+        closeSidebar();
+      }
+    });
+
+    let currentPage = 1;
+    const limit = 20;
+
+    async function loadData() {
+      try {
+        const userData = await API.user.getDashboard();
+        document.getElementById('userName').textContent = userData.user.name;
+        document.getElementById('userAvatar').textContent = userData.user.name.charAt(0).toUpperCase();
+        loadTransactions();
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    async function loadTransactions(page = 1) {
+      try {
+        const data = await API.user.getTransactions(page, limit);
+        const container = document.getElementById('transactionsList');
+        
+        if (!data.transactions || data.transactions.length === 0) {
+          container.innerHTML = `<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-list"></i></div><h3>No Transactions</h3><p>Your transaction history will appear here</p></div>`;
+          document.getElementById('pagination').innerHTML = '';
+          return;
+        }
+        
+        container.innerHTML = `
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Type</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Description</th>
+                  <th>Date</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${data.transactions.map(tx => `
+                  <tr>
+                    <td>
+                      <span style="display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="fas ${getTransactionIcon(tx.type)}" style="color: ${getTransactionColor(tx.type)};"></i>
+                        <span style="text-transform: capitalize;">${tx.type.replace('_', ' ')}</span>
+                      </span>
+                    </td>
+                    <td style="font-weight: 600; ${tx.type === 'deposit' || tx.type === 'investment_return' || tx.type === 'loan' ? 'color: var(--secondary);' : tx.type === 'withdraw' || tx.type === 'invest' ? 'color: var(--danger);' : ''}">
+                      ${tx.type === 'deposit' || tx.type === 'investment_return' || tx.type === 'loan' ? '+' : tx.type === 'withdraw' || tx.type === 'invest' ? '-' : ''}
+                      ${API.utils.formatCurrency(tx.amount)}
+                    </td>
+                    <td><span class="badge badge-${tx.status === 'completed' ? 'success' : tx.status === 'pending' ? 'warning' : 'danger'}">${tx.status}</span></td>
+                    <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis;">${tx.description || '-'}</td>
+                    <td>${API.utils.formatDateTime(tx.createdAt)}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
+          </div>`;
+        
+        // Pagination
+        const pagination = document.getElementById('pagination');
+        if (data.pagination.pages > 1) {
+          let paginationHTML = `
+            <button class="pagination-btn" ${page === 1 ? 'disabled' : ''} onclick="loadTransactions(${page - 1})"><i class="fas fa-chevron-left"></i></button>
+          `;
+          for (let i = 1; i <= data.pagination.pages; i++) {
+            paginationHTML += `<button class="pagination-btn ${i === page ? 'active' : ''}" onclick="loadTransactions(${i})">${i}</button>`;
+          }
+          paginationHTML += `<button class="pagination-btn" ${page === data.pagination.pages ? 'disabled' : ''} onclick="loadTransactions(${page + 1})"><i class="fas fa-chevron-right"></i></button>`;
+          pagination.innerHTML = paginationHTML;
+        }
+      } catch (error) {
+        console.error('Error:', error);
+      }
+    }
+
+    function getTransactionIcon(type) {
+      const icons = {
+        deposit: 'fa-arrow-down',
+        withdraw: 'fa-arrow-up',
+        invest: 'fa-chart-line',
+        loan: 'fa-hand-holding-usd',
+        referral_bonus: 'fa-gift',
+        investment_return: 'fa-coins',
+        loan_repayment: 'fa-undo'
+      };
+      return icons[type] || 'fa-circle';
+    }
+
+    function getTransactionColor(type) {
+      const colors = {
+        deposit: '#10b981',
+        withdraw: '#ef4444',
+        invest: '#f59e0b',
+        loan: '#3b82f6',
+        referral_bonus: '#8b5cf6',
+        investment_return: '#10b981',
+        loan_repayment: '#ef4444'
+      };
+      return colors[type] || '#64748b';
+    }
+
+    loadData();
+
+    // Load unread message count
+    async function loadUnreadMessageCount() {
+      try {
+        const data = await API.message.getUnreadCount();
+        const badge = document.getElementById('messageBadge');
+        if (data.count > 0) {
+          badge.textContent = data.count > 99 ? '99+' : data.count;
+          badge.style.display = 'block';
+        } else {
+          badge.style.display = 'none';
+        }
+      } catch (error) {
+        console.error('Error loading unread count:', error);
+      }
+    }
+
+    loadUnreadMessageCount();
+    loadUnreadMessageCount();
+
+    // Poll unread messages every 10 seconds
+    setInterval(loadUnreadMessageCount, 10000);
+  </script>
+
+  <!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/69c1c6ec91de1e1c374ca128/1jkef23cl';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>
