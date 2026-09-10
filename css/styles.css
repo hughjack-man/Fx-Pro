@@ -409,14 +409,8 @@ a {
   border: 1px solid rgba(255, 255, 255, 0.05);
   border-radius: 16px;
   overflow: hidden;
-  overflow-x: auto;
   margin-bottom: 1.5rem;
-  /* margin-left: 1rem; */
-  /* width: 100%; */
-  font-size: 0.3rem;
-    /* margin: 0 -1rem; */
-    /* padding: 0 1rem; */
-    width: calc(100% + 1rem);
+  width: 100%;
 }
 
 .card-header {
@@ -745,6 +739,105 @@ a {
   background: rgba(59, 130, 246, 0.1);
   border: 1px solid rgba(59, 130, 246, 0.3);
   color: #60a5fa;
+}
+
+/* Toast Notifications (slide in from the side) */
+.toast-container {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10000;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  width: 380px;
+  max-width: calc(100vw - 2rem);
+  pointer-events: none;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: rgba(30, 41, 59, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+  color: #e2e8f0;
+  font-size: 0.9rem;
+  pointer-events: auto;
+  animation: toastSlideIn 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+}
+
+.toast i {
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.toast-success {
+  border-left: 4px solid #10b981;
+}
+
+.toast-success i {
+  color: #34d399;
+}
+
+.toast-danger {
+  border-left: 4px solid #ef4444;
+}
+
+.toast-danger i {
+  color: #f87171;
+}
+
+.toast-warning {
+  border-left: 4px solid #f59e0b;
+}
+
+.toast-warning i {
+  color: #fbbf24;
+}
+
+.toast-info {
+  border-left: 4px solid #3b82f6;
+}
+
+.toast-info i {
+  color: #60a5fa;
+}
+
+.toast-out {
+  animation: toastSlideOut 0.3s ease-in forwards;
+}
+
+@keyframes toastSlideIn {
+  from {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+.light-mode .toast {
+  background: rgba(255, 255, 255, 0.97);
+  border-color: rgba(0, 0, 0, 0.08);
+  color: #1e293b;
 }
 
 /* Loading */
@@ -1419,10 +1512,7 @@ a {
   
   /* Table mobile improvements */
   .table-container {
-    font-size: 0.3rem;
-    margin: 0 -1rem;
-    padding: 0 1rem;
-    width: calc(100% + 1rem);
+    overflow-x: auto;
   }
   
   .table th,
@@ -1437,7 +1527,6 @@ a {
   /* Card improvements */
   .card {
     margin-bottom: 1rem;
-    width: calc(96.5% + 1rem);
   }
   
   .card-header {

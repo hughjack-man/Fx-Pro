@@ -435,21 +435,28 @@ const formatDateTime = (dateString) => {
   });
 };
 
-// Show alert
+// Show alert as a sliding toast notification (top-right, slides in from the side)
 const showAlert = (message, type = 'info', container = null) => {
-  const alertDiv = document.createElement('div');
-  alertDiv.className = `alert alert-${type} fade-in`;
-  alertDiv.innerHTML = `
+  let toastContainer = document.getElementById('toastContainer');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'toastContainer';
+    toastContainer.className = 'toast-container';
+    document.body.appendChild(toastContainer);
+  }
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `
     <i class="fas ${type === 'success' ? 'fa-check-circle' : type === 'danger' ? 'fa-exclamation-circle' : type === 'warning' ? 'fa-exclamation-triangle' : 'fa-info-circle'}"></i>
     <span>${message}</span>
   `;
-  
-  const targetContainer = container || document.querySelector('.content') || document.body;
-  targetContainer.insertBefore(alertDiv, targetContainer.firstChild);
-  
+  toastContainer.appendChild(toast);
+
   setTimeout(() => {
-    alertDiv.remove();
-  }, 5000);
+    toast.classList.add('toast-out');
+    toast.addEventListener('animationend', () => toast.remove(), { once: true });
+  }, 4500);
 };
 
 // Show loading
