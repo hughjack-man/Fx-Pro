@@ -1,4 +1,4 @@
-// Notification System for Coinnex Platform
+// Notification System for Fx Pro Platform
 // Handles notification bell, dropdown, unread counts, and polling
 
 class NotificationSystem {
