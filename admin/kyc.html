@@ -210,7 +210,7 @@
     }
 
     function viewKYC(id, idType, idNumber, frontImage, backImage, selfieImage, status, userName, userEmail) {
-      const baseUrl = window.location.origin;
+      const baseUrl = API.utils.getBaseUrl();
       document.getElementById('kycDetails').innerHTML = `
         <div style="margin-bottom: 1.5rem;">
           <div style="font-weight: 600; font-size: 1.1rem;">${userName}</div>

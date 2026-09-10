@@ -493,6 +493,7 @@ window.API = {
     getToken,
     getUser,
     isAuthenticated,
-    isAdmin
+    isAdmin,
+    getBaseUrl: () => API_BASE_URL.replace(/\/api\/?$/, '')
   }
 };
